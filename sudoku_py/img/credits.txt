@@ -1,0 +1,2 @@
+sudoku-logo.jpg: https://www.shutterstock.com/search/sudoku-logos
+grid.png: https://puzzlestream.com/sudoku/blank-grid.php
