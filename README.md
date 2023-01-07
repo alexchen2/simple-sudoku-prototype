@@ -2,7 +2,7 @@
 A Sudoku game prototype written in Python that utilizes simple web scraping.
 
 ## Features:
-[ ] \(TBD)
+- [ ] \(TBD)
 
 ## To-dos:
-[ ] \(TBD)
+- [ ] \(TBD)
