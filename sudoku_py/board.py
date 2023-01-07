@@ -1,4 +1,4 @@
-# Classes.py - stores primary classes for boards and board-solving used in main module
+# Classes.py - stores primary classes for boards and board-solving used in other modules
 
 #Import math module for .floor and .ceil
 from math import floor

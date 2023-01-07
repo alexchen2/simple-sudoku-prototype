@@ -75,10 +75,38 @@ PBAR_LENGTH = 35
 PBAR_POS = (PBAR_LEFT, PBAR_TOP)
 PBAR_DIM = (PBAR_WIDTH, PBAR_LENGTH)
 
+# Left Outer Info UIPanel
+INFO_PNL_TOP = 0      # Relative to centery anchor
+INFO_PNL_LEFT = 41    # Inner Panel -> + 4
+INFO_PNL_WIDTH = 250  # Inner Panel -> - 8
+INFO_PNL_LENGTH = 300 # Inner Panel -> - 8
+INFO_PNL_POS = (INFO_PNL_LEFT, INFO_PNL_TOP)
+INFO_PNL_DIM = (INFO_PNL_WIDTH, INFO_PNL_LENGTH)
+
+# General UILabel dimensions (for labels within left info UIPanel)
+PLBL_WIDTH = 200
+PLBL_LENGTH = 40
+PLBL_DIM = (PLBL_WIDTH, PLBL_LENGTH)
+
+# Mode UILabel (within Left Info UIPanel)
+MODE_LBL_TOP = 10
+MODE_LBL_LEFT = 0     # Relative to centerx anchor (within UIPanel)
+MODE_LBL_POS = (MODE_LBL_LEFT, MODE_LBL_TOP)
+
+# Mistake Counter UILabel (within Left Info UIPanel)
+MIST_LBL_TOP = 60
+MIST_LBL_LEFT = 0     # Relative to centerx anchor (within UIPanel)
+MIST_LBL_POS = (MIST_LBL_LEFT, MIST_LBL_TOP)
+
+# Timer UILabel (within Left Info UIPanel)
+TIMER_LBL_TOP = 110
+TIMER_LBL_LEFT = 0    # Relative to centerx anchor (within UIPanel)
+TIMER_LBL_POS = (TIMER_LBL_LEFT, TIMER_LBL_TOP)
+
 #General UIButton dimensions (used for tile btns, side btns)
-BTN_WIDTH = 62
-BTN_LENGTH = 62
-BTN_DIM = (BTN_WIDTH, BTN_LENGTH)
+PBTN_WIDTH = 62
+PBTN_LENGTH = 62
+PBTN_DIM = (PBTN_WIDTH, PBTN_LENGTH)
 
 # Side Number Select UIButton
 NUM_BTN_LEFT = 80   # relative to grid UIImage; x = 1020 relative to main window left anchor
