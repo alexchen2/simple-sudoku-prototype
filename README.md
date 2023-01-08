@@ -2,7 +2,7 @@
 A Sudoku game prototype written in Python that utilizes simple web scraping.
 
 ## Features:
-- Obtains random valid sudoku boards through webscraping a sudoku generator website (with BeautifulSoup4), compiling them into a JSON for later use
+- Obtains random valid sudoku boards by webscraping a sudoku generator website (with BeautifulSoup4), compiling them into a JSON for later use
 - Interactive GUI made using pygame and pygame-gui
 - Five levels of difficulty available to choose from: Safety, Easy, Normal, Hard, and [Asian](https://youtu.be/miD_TWmdGIY)
 
