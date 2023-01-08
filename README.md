@@ -8,8 +8,12 @@ A Sudoku game prototype written in Python that utilizes simple web scraping.
 
 ## To-dos:
 - [ ] Fix collision problems with deselected mistake UIButtons when attempting to select them
+- [ ] Add game over functionality
+- [ ] Add simple keyboard support during gameplay
 - [ ] Implement eraser, pause, and hint buttons during gameplay
-- [ ] Implement a Game Over and Main Menu screen
+- [ ] Implement additional screens:
+  - [ ] Game Over
+  - [ ] Main Menu 
 - [ ] Implement hints functionality and hint button during gameplay
 - [ ] Work on prettying up GUI
 
