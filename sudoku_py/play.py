@@ -13,12 +13,14 @@ import time
 
 class Play():
     def __init__(self, manager):
-        # Obligatory display screen + manager
+        # Obligatory display screen & manager + other important variables
         self.screen = pygame.display.get_surface()
         self.manager = manager
         self.sudoku = None
-        self.mode = None
-        self.startTime = 0
+        self.mode = None         # For displaying mode during gameplay
+        self.startTime = 0       # For displaying timer
+        self.gameOver = False    # For determining whether to cease all game functionality
+        self.pause = False
 
         # Sudoku grid (just an image with the self.tileBtns overlaid on top of it)
         grid = pygame.image.load(GRID_IMG).convert()
@@ -29,11 +31,11 @@ class Play():
                                                object_id="#grid_image"),
                             anchors={"center": "center"})
 
-        # WIP progress bar to show progress of current game
         # placeholder value; number of currently correct HIDDEN, interactable tiles on the board
         self.correctTiles = 0
         # placeholder value; number of total HIDDEN, interactable tiles on the board
         self.totalTiles = 1
+        # WIP progress bar to show progress of current game
         self.pBar = UIProgressBar(pygame.Rect(PBAR_POS, PBAR_DIM),
                                   manager=self.manager,
                                   object_id=ObjectID(class_id="@play_pbar",
@@ -41,10 +43,6 @@ class Play():
                                   anchors={"centerx": "centerx"})
         self.pBar.set_current_progress(0.00)
         self.pBar.status_text = lambda: f"Progress: {self.pBar.current_progress:0.2f}%"
-
-        nums = [str(num) for num in range(1, 10)]
-        self.numBtns = [self.createSideBtn(num, index, len(nums) - 1, NUM_BTN_LEFT)
-                        for index, num in enumerate(nums)]
 
         # Middle Button Contents + Variables
         # Initial placeholder value for tileBtns, until receiving board info
@@ -93,7 +91,9 @@ class Play():
                                object_id=ObjectID(class_id="@play_label",
                                                   object_id="#mode_label"),
                                anchors={"centerx": "centerx",
-                                        "centerx_target": self.infoPanelIn})
+                                        "bottom": "bottom",
+                                        "centerx_target": self.infoPanelIn,
+                                        "bottom_target": self.infoPanelIn})
 
         self.mistakeLbl = UILabel(pygame.Rect(MIST_LBL_POS, PLBL_DIM),
                                   text=f"Mistakes: {str(self.mistakes)} / 5",
@@ -102,7 +102,9 @@ class Play():
                                   object_id=ObjectID(class_id="@play_label",
                                                      object_id="#mistake_label"),
                                   anchors={"centerx": "centerx",
-                                           "centerx_target": self.infoPanelIn})
+                                           "bottom": "bottom",
+                                           "centerx_target": self.infoPanelIn,
+                                           "bottom_target": self.infoPanelIn})
 
         self.timerLbl = UILabel(pygame.Rect(TIMER_LBL_POS, PLBL_DIM),
                                 text=f"Time: 00:00:00:00",       # Format = hr:min:sec:millisec
@@ -111,7 +113,38 @@ class Play():
                                 object_id=ObjectID(class_id="@play_label",
                                                    object_id="#timer_label"),
                                 anchors={"centerx": "centerx",
-                                         "centerx_target": self.infoPanelIn})
+                                         "bottom": "bottom",
+                                         "centerx_target": self.infoPanelIn,
+                                         "bottom_target": self.infoPanelIn})
+
+        self.instructLbl = [UILabel(pygame.Rect((INSTRUCT_LBL_LEFT, INSTRUCT_LBL_TOP + displace), INSTRUCT_LBL_DIM),
+                                    text=INSTRUCT_LBL_TXT[index],
+                                    container=self.infoPanelIn,
+                                    manager=self.manager,
+                                    object_id=ObjectID(class_id="@play_label",
+                                                       object_id="#instruct_label"),
+                                    anchors={"centerx": "centerx",
+                                             "bottom": "bottom",
+                                             "centerx_target": self.infoPanelIn,
+                                             "bottom_target": self.infoPanelIn})
+                            for index, displace in enumerate(range(0, 82, 27))]    # Each list entry -> separate line of instructions, each displaced by 27 pixels for spacing
+
+        # put constants here, since need to refer to variables only in play class
+        NUM_BTN_ANCHORS = {"left": "left",
+                           "left_target": self.grid,
+                           "centery": "centery"}
+        IMG_RBTN_ANCHORS = {"left": "left",
+                            "left_target": self.grid,
+                            "centery": "centery"}
+        IMG_LBTN_ANCHORS = {"centerx": "centerx",
+                            "centerx_target": self.infoPanelIn,
+                            "centery": "centery"}
+        self.numBtns = [self.createSideBtn(
+            NUM_CONFIG, row, col, NUM_BTN_LEFT, NUM_BTN_TOP, NUM_BTN_ANCHORS) for col in range(3) for row in range(3)]
+        self.ImgRBtns = [self.createSideBtn(
+            IMG_RCONFIG, 0, col, IMG_RBTN_LEFT, IMG_RBTN_TOP, IMG_RBTN_ANCHORS, isImage=True) for col in range(2)]
+        self.ImgLBtns = [self.createSideBtn(
+            IMG_LCONFIG, 0, col, IMG_LBTN_LEFT, IMG_LBTN_TOP, IMG_LBTN_ANCHORS, isImage=True) for col in range(2)]
 
         self.QuitBtn = UIButton(pygame.Rect((10, 10), (100, 50)),
                                 text="Quit Game",
@@ -135,7 +168,8 @@ class Play():
                 case "5":
                     self.mode = "Asian"
             self.modeLbl.set_text(f"Mode: {self.mode}")
-            
+
+            self.gameOver = False
             self.mistakes = 0
             self.mistakeLbl.set_text(f"Mistakes: {str(self.mistakes)} / 5")
 
@@ -147,20 +181,28 @@ class Play():
 
             self.startTime = pygame.time.get_ticks()
 
-        time = self.timer()
-        self.timerLbl.set_text(f"Time: {time}")
-        self.checkProgress()
-        self.enable()
+        if not (self.gameOver or self.ImgLBtns[0].is_selected):
+            time = self.timer()
+            self.timerLbl.set_text(f"Time: {time}")
+            self.checkProgress()
+            self.enable()
 
     def enable(self):
         # Show all elements on screen + enable all functionality
-        for coord in self.tileBtns:
-            # if "#shown_button" in self.tileBtns[coord].object_ids:     # Not needed, probably...
-            if coord not in self.wrongBtns:       # If tileBtn currently not overlaid by a "#mistake_button"
-                self.tileBtns[coord].show()
-                self.tileBtns[coord].enable()
+        for btn in self.tileBtns.values():
+            if btn != None:       # If coordinate on board currently not overlaid by a "#mistake_button"
+                btn.show()
+                btn.enable()
 
         for btn in self.numBtns:
+            btn.enable()
+            btn.show()
+
+        for btn in self.ImgLBtns:
+            btn.enable()
+            btn.show()
+
+        for btn in self.ImgRBtns:
             btn.enable()
             btn.show()
 
@@ -176,15 +218,25 @@ class Play():
 
     def disable(self):
         # Hide all buttons from screen + disable all button functionality
-        for coord in self.tileBtns:
-            self.tileBtns[coord].disable()
-            self.tileBtns[coord].hide()
+        for btn in self.tileBtns.values():
+            if btn != None:
+                btn.disable()
+                btn.hide()
 
         for btn in self.numBtns:
             btn.disable()
             btn.hide()
 
+        for btn in self.ImgLBtns:
+            btn.disable()
+            btn.hide()
+
+        for btn in self.ImgRBtns:
+            btn.disable()
+            btn.hide()
+
         if len(self.wrongBtns) > 0:
+            # Created to avoid tampering with iterable that later for loop is iterating over
             tempList = []
             for coord in self.wrongBtns:
                 tempList.append(coord)
@@ -231,35 +283,35 @@ class Play():
 
         return button
 
-    def createSideBtn(self, txtContent, btnIndex, maxNumBtns, yCoord, imgContent=None, isImage=False):
+    def createSideBtn(self, config: list, row, col, xDisplace, yDisplace, anchors: dict, isImage=False):
         """
-        Function that creates and returns a button located to the side of the sudoku grid UIImage,
+        Function that creates and returns a button located to the right side of the sudoku grid UIImage,
         whether that be a number or image button.
+        :param config: 2D list showing configuration of the buttons, with each element of the inner lists 
+        containing the txt/img content of the button.
+        :param row: row / y-coordinate that the button being made is in.
+        :param col: column / x-coordinate that the button being made is in.
         """
-        x = yCoord
-        y = (-(maxNumBtns // 2) * 65) + (65 * btnIndex)
+        maxCols = len(config[0])
+        maxRows = len(config)
+        x = (-((maxCols / 2) - 0.5) * 67) + (67 * col) + xDisplace
+        y = (-((maxRows / 2) - 0.5) * 67) + (67 * row) + yDisplace
         pos = (x, y)
 
         if isImage:
             button = UIButton(pygame.Rect(pos, PBTN_DIM),
-                              text=" ",
+                              text="",
                               manager=self.manager,
                               object_id=ObjectID(class_id="@play_side_btn",
-                                                 object_id="#img_button"),
-                              anchors={"left": "left",
-                                       "left_target": self.grid,
-                                       "centery": "centery"})
-
-            button.set_image = imgContent
+                                                 object_id=config[row][col]),
+                              anchors=anchors)
         else:
             button = UIButton(pygame.Rect(pos, PBTN_DIM),
-                              text=txtContent,
+                              text=config[row][col],
                               manager=self.manager,
                               object_id=ObjectID(class_id="@play_side_btn",
                                                  object_id="#num_button"),
-                              anchors={"left": "left",
-                                       "left_target": self.grid,
-                                       "centery": "centery"})
+                              anchors=anchors)
 
         return button
 
@@ -277,26 +329,21 @@ class Play():
         answer = self.sudoku.answer[row][col]
 
         if inputNum == answer:
-            # if self.tileBtns[self.selectedCoords] == self.selectedBtn:  # Remove this conditional clause later
-            #     self.selectedBtn.set_text(inputNum)
-
-            #     self.correctTiles += 1
-
             if self.selectedCoords in self.wrongBtns:
                 self.wrongBtns[self.selectedCoords].kill()
                 del (self.wrongBtns[self.selectedCoords])
 
+                # Recreate tile button
+                self.tileBtns[self.selectedCoords] = self.createTileBtn(self.sudoku, row, col)
                 self.selectedBtn = self.tileBtns[self.selectedCoords]
                 self.selectedBtn.enable()
                 self.selectedBtn.show()
                 self.selectedBtn.select()
 
-            self.selectedBtn.set_text(inputNum)
+            if self.selectedBtn.text != answer:
+                self.selectedBtn.set_text(inputNum)
+                self.correctTiles += 1
 
-            self.correctTiles += 1
-
-            # progress = round(self.correctTiles / self.totalTiles, 1)
-            # self.pBar.set_current_progress(progress)
         else:
             # Case A: selected btn is a "#hidden_button":
             if self.tileBtns[self.selectedCoords] == self.selectedBtn:
@@ -320,10 +367,8 @@ class Play():
                 if self.selectedBtn.text == answer and self.correctTiles != 0:
                     self.correctTiles -= 1
 
-                self.selectedBtn.set_text(" ")
-                self.selectedBtn.unselect()
-                self.selectedBtn.disable()
-                self.selectedBtn.hide()
+                self.tileBtns[self.selectedCoords].kill()
+                self.tileBtns[self.selectedCoords] = None
 
                 self.selectedBtn = wrongButton
 
@@ -337,6 +382,48 @@ class Play():
 
         self.checkProgress()
 
+    def deleteNum(self):
+        if not (self.selectedBtn.is_selected and
+                (self.tileBtns[self.selectedCoords] == self.selectedBtn  # Case where "#hidden_button" was selected
+                 or self.selectedCoords in self.wrongBtns)):             # Case where "#wrong_button" was selected
+            return
+        
+        row = self.selectedCoords[0]
+        col = self.selectedCoords[1]
+        answer = self.sudoku.answer[row][col]
+
+        if self.selectedCoords in self.wrongBtns:
+            self.wrongBtns[self.selectedCoords].kill()
+            del (self.wrongBtns[self.selectedCoords])
+
+            # Recreate tile button
+            self.tileBtns[self.selectedCoords] = self.createTileBtn(self.sudoku, row, col)
+            self.selectedBtn = self.tileBtns[self.selectedCoords]
+            self.selectedBtn.enable()
+            self.selectedBtn.show()
+            self.selectedBtn.select()
+            self.selectedBtn.set_text(" ")
+        else:
+            if self.selectedBtn.text == answer and self.correctTiles != 0:
+                self.correctTiles -= 1
+
+            self.selectedBtn.set_text(" ")
+
+        self.checkProgress()
+
+    def timer(self):
+        currentTicks = pygame.time.get_ticks() - self.startTime
+
+        # Time calculation
+        millisec = currentTicks % 1000
+        secs = int((currentTicks / 1000) % 60)
+        mins = int((currentTicks / 60000) % 60)
+        hrs = int((currentTicks / 3600000))
+        # Any time over
+        time = f"{hrs:02d}:{mins:02d}:{secs:02d}:{millisec:03d}"
+
+        return time
+
     def checkProgress(self):
         """
         Checks the current progress of the game; specifically, if the user either has made more than 
@@ -344,83 +431,146 @@ class Play():
         board (a win). If either condition checks True, then the game ends and the window transitions 
         to the Game End/Game Over screen (WIP).
         """
+        # Update progress bar
         progress = round((self.correctTiles / self.totalTiles) * 100, 2)
         self.pBar.set_current_progress(progress)
         self.pBar.status_text = lambda: f"Progress: {self.pBar.current_progress:0.2f}%"
 
-    def timer(self):
-        currentTicks = pygame.time.get_ticks() - self.startTime
+        if self.mistakes >= 5:
+            self.gameOver = True
+            print("Lose Test")
+            htmlMsg = LOSE_MSG
+        elif self.pBar.current_progress >= 100.0:
+            self.gameOver = True
+            print("Win Test")
+            htmlMsg = WIN_MSG
 
-        # Time calculation
-        millisec = currentTicks % 1000
-        secs = int((currentTicks / 1000) % 60) 
-        mins = int((currentTicks / 60000) % 60)
-        hrs = int((currentTicks / 3600000)) 
-        time = f"{hrs:02d}:{mins:02d}:{secs:02d}:{millisec:03d}"    # Any time over
-        
-        return time
+        if self.gameOver:
+            msg = pygame_gui.windows.UIMessageWindow(pygame.Rect(440, 260, 400, 200),
+                                                     html_message=htmlMsg,
+                                                     manager=self.manager,
+                                                     object_id=ObjectID(class_id="@play_msg_box",
+                                                                        object_id="#game_over_message"),
+                                                     window_title="Game End")
+
+            # Disabling everything EXCEPT quit button
+            for btn in self.tileBtns.values():
+                if btn != None:
+                    btn.disable()
+
+            for btn in self.numBtns:
+                btn.disable()
+
+            for btn in self.ImgLBtns:
+                btn.disable()
+
+            for btn in self.ImgRBtns:
+                btn.disable()
+
+            if len(self.wrongBtns) > 0:
+                for btn in self.wrongBtns.values():
+                    btn.disable()
 
     def eventCheck(self, event, status):
         """
         Checks for any user input, and acts accordingly.
         """
-        # For debugging purposes
+        # Keyboard input
         if event.type == pygame.KEYDOWN:
-            pass
-
-        elif event.type == pygame_gui.UI_BUTTON_PRESSED:
-            if event.ui_object_id == "#quit_button":
-                status = 0
-                self.disable()
-
-            elif event.ui_object_id == "#hidden_button":
-                if event.ui_element.is_selected:
-                    event.ui_element.unselect()
-                    # event.ui_element.set_text(" ")
-                else:
-                    for coord in self.tileBtns:
-                        self.tileBtns[coord].unselect()
-
-                    if len(self.wrongBtns) > 0:
-                        for coord in self.wrongBtns:
-                            self.wrongBtns[coord].unselect()
-
-                    event.ui_element.select()
-                    self.selectedBtn = event.ui_element
-
-                    # Get selected btn's coordinates
-                    if self.selectedBtn in self.tileBtns.values():
-                        # Will only ever have one element inside, since all btns are unique
-                        tempKeys = [
-                            key for key in self.tileBtns if self.tileBtns[key] == self.selectedBtn]
-                    elif self.selectedBtn in self.wrongBtns.values():
-                        tempKeys = [
-                            key for key in self.wrongBtns if self.wrongBtns[key] == self.selectedBtn]
-
-                    self.selectedCoords = tempKeys[0]
-
-            elif event.ui_object_id == "#num_button":
-                inputNum = event.ui_element.text
+            if event.key in KEY_CHECK:
+                inputNum = str(KEY_CHECK.index(event.key) + 1)
                 self.placeNum(inputNum)
-                # if event.ui_element.is_selected:
-                #     event.ui_element.unselect()
-                # else:
-                #     for btn in self.numBtns:
-                #         btn.unselect()
 
-                #     event.ui_element.select()
+        # In-game UIButton input
+        elif event.type == pygame_gui.UI_BUTTON_PRESSED:
+            match event.ui_object_id:
+                case "#quit_button":
+                    status = 0
+                    self.disable()
+
+                case "#hidden_button" | "#wrong_button":
+                    if event.ui_element.is_selected:
+                        event.ui_element.unselect()
+                    else:
+                        for btn in self.tileBtns.values():
+                            if btn != None:
+                                btn.unselect()
+
+                        if len(self.wrongBtns) > 0:
+                            for btn in self.wrongBtns.values():
+                                btn.unselect()
+
+                        event.ui_element.select()
+                        self.selectedBtn = event.ui_element
+
+                        # Get selected btn's coordinates
+                        if self.selectedBtn in self.tileBtns.values():
+                            # Will only ever have one element inside, since all btns are unique
+                            tempKeys = [
+                                key for key in self.tileBtns if self.tileBtns[key] == self.selectedBtn]
+                        elif self.selectedBtn in self.wrongBtns.values():
+                            tempKeys = [
+                                key for key in self.wrongBtns if self.wrongBtns[key] == self.selectedBtn]
+
+                        self.selectedCoords = tempKeys[0]
+
+                case "#num_button":
+                    inputNum = event.ui_element.text
+                    self.placeNum(inputNum)
+
+                case "#eraser_button":
+                    self.deleteNum()
+
+                case "#pause_button":
+                    if event.ui_element.is_selected:
+                        event.ui_element.unselect()
+                        self.enable()
+                        print("Unpause Test")      # Debug
+                    else:
+                        for btn in self.tileBtns.values():
+                            if btn != None:
+                                btn.disable()
+
+                        for btn in self.numBtns:
+                            btn.disable()
+
+                        for btn in self.ImgRBtns:
+                            btn.disable()
+
+                        self.ImgLBtns[1].disable()
+
+                        if len(self.wrongBtns) > 0:
+                            for btn in self.wrongBtns.values():
+                                btn.disable()
+                        
+                        event.ui_element.select()           
+                        print("Pause Test")      # Debug
+                
+                case "#hint_button" | "#notes_button":
+                    tempMsg = pygame_gui.windows.UIMessageWindow(pygame.Rect(440, 260, 400, 200),
+                                                     html_message="This button's functionality has not been implemented yet.",
+                                                     manager=self.manager,
+                                                     object_id=ObjectID(class_id="@play_msg_box",
+                                                                        object_id="#temp_message"),
+                                                     window_title="Notice")
 
         elif event.type == pygame_gui.UI_BUTTON_ON_HOVERED:
             if event.ui_object_id == "#hidden_button":
-                print("Hover Test 1")
+                pass
+                # print("Hover Test 1")      # For debugging purposes
             elif event.ui_object_id == "#wrong_button":
-                print("Hover Test 2")
+                pass
+                # print("Hover Test 2")      # For debugging purposes
 
         elif event.type == pygame_gui.UI_BUTTON_ON_UNHOVERED:
             if event.ui_object_id == "#shown_button":
                 pass
 
         return status
+
+# --------------------#
+# Test/Debug
+# --------------------#
 
 
 def main():

@@ -42,14 +42,6 @@ class LevelSelect():
                                             object_id = ObjectID(class_id="@lvl_button",
                                                                  object_id="#asian_button"),
                                             anchors = {"centerx" : "centerx"})
-        # Font + text
-        # title = pygame.image.load(LTITLE_IMG).convert()
-        # self.title = UIImage(pygame.Rect(LTITLE_POS, LTITLE_DIM),
-        #                      image_surface = title,
-        #                      manager = self.manager,
-        #                      object_id = ObjectID(class_id="@play_img",
-        #                                          object_id="#grid_image"),
-        #                      anchors = {"centerx" : "centerx"})
         self.title = UILabel(pygame.Rect(LTITLE_POS, LTITLE_DIM),
                              text = LTITLE_TXT,
                              manager = self.manager,
@@ -64,18 +56,10 @@ class LevelSelect():
                                 anchors = {"centerx" : "centerx"})
 
         self.disable()
-        # self.titleFont = pygame.font.Font(MENU_FONT, TITLE_FONT_SIZE)
-        # self.subtitleFont = pygame.font.Font(MENU_FONT, SUBTITLE_FONT_SIZE)
-        # self.title = self.titleFont.render("Sudoku Prototype", True, (0, 0, 0))
-        # self.subtitle = self.subtitleFont.render("Choose your level:", True, (0, 0, 0))
 
     def run(self):  # Might later move contents of self.enable over to here, if self.run proves redundant in the future
         # Enable elements if not already enabled
         self.enable()
-
-        # # Place text on screen display
-        # self.screen.blit(self.title, (400, 100))
-        # self.screen.blit(self.subtitle, (560, 195))
             
     def enable(self):
         # Show all elements on screen
@@ -134,12 +118,7 @@ class LevelSelect():
                     lvl = "4"
                 case "#asian_button":
                     lvl = "5"
-        # For debugging, and placeholder for future kb input functionality                    
-        # elif event.type == pygame.KEYDOWN: 
-        #     if event.key == pygame.K_SPACE:
-        #         board = Sudoku("5")
-        #         self.status = 1
-        #         self.disable()
+
         if btnPress:
             sudoku = Sudoku(lvl)
             sudoku.getBoard()
@@ -148,7 +127,13 @@ class LevelSelect():
 
         return status, sudoku
 
-if __name__ == "__main__":
+# --------------------#
+# Test/Debug
+# --------------------#
+def main():
     from math import floor
     print((3 * floor(7 / 3)) + 3)
     pass
+
+if __name__ == "__main__":
+    main()

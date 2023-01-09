@@ -18,7 +18,7 @@ def getBoard(boardID : int = 0, lvl : str = "3"):
     code = BeautifulSoup(page.content, "html.parser")
 
     results = code.find_all("script")
-    # for index, elem in enumerate(results):        # ...for debugging
+    # for index, elem in enumerate(results):        # ...for debugging/testing
     #     print(f"-----Index {index}: \n{elem}")
 
     boardInfo = (results[6]).prettify()      # Where sudoku board info is stored in html/javascript code
@@ -85,13 +85,14 @@ def addFive(lvl : str):
         output = json.dumps(database)
         fh2.write(output)
 
-#------------------------#
-
+# --------------------#
+# Test/Debug
+# --------------------#
 def main():
     create()
     addFive("1")
 
-if __name__ == "__main__":   # Running this file for debugging functions in this module
+if __name__ == "__main__":   
     main()
                 
 

@@ -46,6 +46,34 @@
             "text_horiz_alignment": "left"
         }
     },
+    "#instruct_label": {
+        "font": {
+            "name": "Nugo Sans",
+            "size": "15",
+            "regular_path": "font/NugoSansLight-9YzoK.ttf"
+        },
+        "misc": {
+            "text_vert_alignment": "top"
+        }
+    },
+    "button": {
+        "colours": {
+            "normal_bg": "#FFFFFF",
+            "hovered_bg": "#E0E5EC",
+            "active_bg": "#CECECE",
+            "normal_text": "#000000",
+            "hovered_text": "#000000",
+            "active_text": "#000000",
+            "normal_border": "#000000",
+            "hovered_border": "#000000",
+            "active_border": "#000000"
+        },
+        "misc": {
+            "shape": "rectangle",
+            "border_width": "1",
+            "shadow_width": "0"
+        }
+    },
     "@play_tile_btn": {
         "colours": {
             "normal_text": "#000000",
@@ -72,6 +100,7 @@
             "selected_bg": "#CBCEDC",
             "active_bg": "#C0C3D1",
             "selected_text": "#000000",
+            "disabled_text": "#000000",
             "active_text": "#000000"
         }
     },
@@ -79,11 +108,12 @@
         "colours": {
             "normal_bg": "#FFFFFF",
             "hovered_bg": "#E0E5EC",
-            "disabled_bg": "#FFFFFF",
+            "disabled_bg": "#E0E5EC",
             "selected_bg": "#BDDBFD",
             "active_bg": "#CECECE",
             "normal_text": "#315AAF",
             "hovered_text": "#315AAF",
+            "disabled_text": "#315AAF",
             "selected_text": "#315AAF",
             "active_text": "#315AAF"
         }
@@ -92,40 +122,82 @@
         "colours": {
             "normal_bg": "#FFFFFF",
             "hovered_bg": "#E0E5EC",
-            "disabled_bg": "#FFFFFF",
+            "disabled_bg": "#E0E5EC",
             "selected_bg": "#FDBDBD",
             "active_bg": "#CECECE",
             "normal_text": "#AF3131",
             "hovered_text": "#AF3131",
+            "disabled_text": "#AF3131",
             "selected_text": "#AF3131",
             "active_text": "#AF3131"
         }
     },
+    "#eraser_button": {
+        "images": {
+            "normal_image": {
+                "path": "img/eraser.png"
+            },
+            "hovered_image": {
+                "path": "img/eraser.png"
+            },
+            "disabled_image": {
+                "path": "img/eraser.png"
+            }
+        }
+    },
+    "#notes_button": {
+        "images": {
+            "normal_image": {
+                "path": "img/notes.png"
+            },
+            "hovered_image": {
+                "path": "img/notes.png"
+            },
+            "disabled_image": {
+                "path": "img/notes.png"
+            }
+        }
+    },
+    "#pause_button": {
+        "images": {
+            "normal_image": {
+                "path": "img/pause.png"
+            },
+            "hovered_image": {
+                "path": "img/pause.png"
+            },
+            "selected_image": {
+                "path": "img/pause.png"
+            },
+            "disabled_image": {
+                "path": "img/pause.png"
+            }
+        }
+    },
+    "#hint_button": {
+        "images": {
+            "normal_image": {
+                "path": "img/idea.png"
+            },
+            "hovered_image": {
+                "path": "img/idea.png"
+            },
+            "disabled_image": {
+                "path": "img/idea.png"
+            }
+        }
+    },
     "@play_side_btn": {
+        "colours": {
+            "disabled_bg": "#E0E5EC",
+            "disabled_text": "#000000"
+        },
         "font": {
             "name": "Montserrat",
             "size": "30",
             "regular_path": "font/Montserrat-Regular.ttf",
             "bold_path": "font/Montserrat-Bold.ttf",
             "bold": "1"
-        }
-    },
-    "button": {
-        "colours": {
-            "normal_bg": "#FFFFFF",
-            "hovered_bg": "#E0E5EC",
-            "active_bg": "#CECECE",
-            "normal_text": "#000000",
-            "hovered_text": "#000000",
-            "active_text": "#000000",
-            "normal_border": "#000000",
-            "hovered_border": "#000000",
-            "active_border": "#000000"
-        },
-        "misc": {
-            "shape": "rectangle",
-            "border_width": "1",
-            "shadow_width": "0"
         }
     },
     "@play_pbar": {
@@ -149,6 +221,27 @@
             "shape_corner_radius": "25",
             "shadow_width": "0"
         }
+    },
+    "window": {
+        "colours": {
+            "dark_bg": "#FFFFFF",
+            "normal_border": "#000000"
+        }
+    },
+    "@play_msg_box.text_box": {
+        "colours": {
+            "dark_bg": "#FFFFFF",
+            "normal_text": "#000000",
+            "normal_border": "#FFFFFF"
+        },
+        "misc": {
+            "text_vert_alignment": "center"
+        }
+    },
+    "text_box": {
+        "dark_bg": "#FFFFFF",
+        "normal_text": "#000000",
+        "normal_border": "#FFFFFF"
     },
     "defaults": {}
 }

@@ -1,25 +1,32 @@
 # display.py - all pygame and gui-related functions/classes
-import pygame, sys, pygame_gui
+import pygame
+import sys
+import pygame_gui
 from settings import *
 from levelSelect import LevelSelect
 from play import Play
 from board import Sudoku, SudokuParser    # currently redundant
 import time
 
+
 class Game():
     def __init__(self):
         # Setup window and other things...
         pygame.init()
 
-        self.status = 0      # For switching between different screens; 0 = lvlSelect, 1 = game, etc... (expand on later)
-        self.screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT), flags = pygame.HIDDEN) # Window is hidden beforehand (until Game.start() is run)
+        # For switching between different screens; 0 = lvlSelect, 1 = game, etc... (expand on later)
+        self.status = 0
+        # Window is hidden beforehand (until Game.start() is run)
+        self.screen = pygame.display.set_mode(
+            (WIN_WIDTH, WIN_HEIGHT), flags=pygame.HIDDEN)
         self.title = pygame.display.set_caption(TITLE)
         self.clock = pygame.time.Clock()
         self.icon = pygame.image.load(WIN_ICON)
         pygame.display.set_icon(self.icon)
 
         # PyGameGUI UI manager + import JSON theme
-        self.manager = pygame_gui.UIManager((WIN_WIDTH, WIN_HEIGHT), "theme.json")
+        self.manager = pygame_gui.UIManager(
+            (WIN_WIDTH, WIN_HEIGHT), "theme.json")
 
         # Other classes:
         self.sudoku = None
@@ -32,9 +39,9 @@ class Game():
         boardChange = True
         running = True
 
-        while running:            
+        while running:
             # Amount of time passed within each tick
-            timeDelta = (self.clock.tick(FPS) / 1000.0)   
+            timeDelta = (self.clock.tick(FPS) / 1000.0)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:   # Press X button on window
@@ -43,14 +50,15 @@ class Game():
                     pygame.quit()
                     sys.exit()
                 else:
-                    self.status, self.sudoku = self.levelSelect.eventCheck(event, self.status, self.sudoku)
+                    self.status, self.sudoku = self.levelSelect.eventCheck(
+                        event, self.status, self.sudoku)
                     if self.sudoku != None:
                         self.play.sudoku = self.sudoku
 
                     self.status = self.play.eventCheck(event, self.status)
 
                 self.manager.process_events(event)
-            
+
             self.manager.update(timeDelta)
             self.screen.fill((255, 255, 255))
 
@@ -76,22 +84,12 @@ class Game():
             pygame.display.update()
             # self.clock.tick(FPS)
 
-
-# def mistakeCounter(mistake):
-#     mistake += 1
-
-#     if mistake >= 3:
-#         print("Game Over (code here)")
-#         return(None)
-#     else: 
-#         return(mistake)
-
-# num = 3
-
-# num = mistakeCounter(num)   
-
-# print(num)
-
-if __name__ == "__main__":
+# --------------------#
+# Test/Debug
+# --------------------#
+def main():
     test = Game()
     test.start()
+
+if __name__ == "__main__":
+    main()

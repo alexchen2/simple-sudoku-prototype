@@ -1,19 +1,31 @@
 # settings.py - for any global variables/constants used in other modules, kept in one file for convenience's sake
-#----------------#
+import pygame
+
+# ----------------#
 # General Game Constants
-#----------------#
+# ----------------#
 WIN_WIDTH = 1280
 WIN_HEIGHT = 720      # (width, height)
 TITLE = "Sudoku Game Prototype - by Alex Chen"
 WIN_ICON = "img/sudoku.png"
 FPS = 60
 
-#----------------#
+KEY_CHECK = [pygame.K_1,
+             pygame.K_2,
+             pygame.K_3,
+             pygame.K_4,
+             pygame.K_5,
+             pygame.K_6,
+             pygame.K_7,
+             pygame.K_8,
+             pygame.K_9]
+
+# ----------------#
 # Level Select Menu Constants
-#----------------#
+# ----------------#
 HEIGHT_PADDING = 10
 LBTN_WIDTH = 300
-LBTN_HEIGHT = 60 # Padding for top + bottom = 10 + 10
+LBTN_HEIGHT = 60  # Padding for top + bottom = 10 + 10
 LBTN_DIM = (LBTN_WIDTH, LBTN_HEIGHT)
 
 # Text UILabel Settings
@@ -54,11 +66,10 @@ ASIN_BTN_LEFT = HARD_BTN_LEFT
 ASIN_BTN_TOP = HARD_BTN_TOP + (LBTN_HEIGHT + HEIGHT_PADDING)
 ASIN_BPOS = (ASIN_BTN_LEFT, ASIN_BTN_TOP)
 
-#----------------#
+# ----------------#
 # In-Game Play Constants
-#----------------#
-
-#Sudoku Grid UIImage
+# ----------------#
+# Sudoku Grid UIImage
 GRID_IMG = "img/grid.png"
 GRID_TOP = 25         # Relative to center
 GRID_LEFT = 0
@@ -76,15 +87,16 @@ PBAR_POS = (PBAR_LEFT, PBAR_TOP)
 PBAR_DIM = (PBAR_WIDTH, PBAR_LENGTH)
 
 # Left Outer Info UIPanel
-INFO_PNL_TOP = 0      # Relative to centery anchor
+# Relative to centery anchor; will add displacement later when adding more buttons underneath panel (e.g. pause btn)
+INFO_PNL_TOP = -38
 INFO_PNL_LEFT = 41    # Inner Panel -> + 4
-INFO_PNL_WIDTH = 250  # Inner Panel -> - 8
-INFO_PNL_LENGTH = 300 # Inner Panel -> - 8
+INFO_PNL_WIDTH = 260  # Inner Panel -> - 8
+INFO_PNL_LENGTH = 300  # Inner Panel -> - 8
 INFO_PNL_POS = (INFO_PNL_LEFT, INFO_PNL_TOP)
 INFO_PNL_DIM = (INFO_PNL_WIDTH, INFO_PNL_LENGTH)
 
 # General UILabel dimensions (for labels within left info UIPanel)
-PLBL_WIDTH = 200
+PLBL_WIDTH = 210
 PLBL_LENGTH = 40
 PLBL_DIM = (PLBL_WIDTH, PLBL_LENGTH)
 
@@ -103,14 +115,47 @@ TIMER_LBL_TOP = 110
 TIMER_LBL_LEFT = 0    # Relative to centerx anchor (within UIPanel)
 TIMER_LBL_POS = (TIMER_LBL_LEFT, TIMER_LBL_TOP)
 
-#General UIButton dimensions (used for tile btns, side btns)
+# Instructions UILabel (within Left Info UIPanel)
+INSTRUCT_LBL_TXT = ["Select a tile on the board, ",
+                    "then type in a number or click ",
+                    "the buttons to the right of ",
+                    "the board to input a value."]
+INSTRUCT_LBL_TOP = 160
+INSTRUCT_LBL_LEFT = 0    # Relative to centerx anchor (within UIPanel)
+INSTRUCT_LBL_LENGTH = 30
+INSTRUCT_LBL_DIM = (PLBL_WIDTH, INSTRUCT_LBL_LENGTH)
+
+# General UIButton dimensions (used for tile btns, side btns)
 PBTN_WIDTH = 62
 PBTN_LENGTH = 62
 PBTN_DIM = (PBTN_WIDTH, PBTN_LENGTH)
 
 # Side Number Select UIButton
-NUM_BTN_LEFT = 80   # relative to grid UIImage; x = 1020 relative to main window left anchor
+NUM_CONFIG = [['1', '2', '3'],
+              ['4', '5', '6'],
+              ['7', '8', '9']]
+NUM_BTN_TOP = -36.5    # relative to centery anchor
+NUM_BTN_LEFT = 139  # relative to grid UIImage; x = 1079 relative to main window left anchor
 
 # Side Image UIButton (e.g. pencil input btn, eraser delete btn, notes input btn (possibly...?))
-IMG_BTN_LEFT = 162  # relative to grid UIImage; x = 1102 relative to main window left anchor 
+IMG_1 = "#eraser_button"
+IMG_2 = "#notes_button"
+IMG_3 = "#pause_button"
+IMG_4 = "#hint_button"
+IMG_RCONFIG = [[IMG_1, IMG_2]]
+IMG_RBTN_TOP = 100.5
+# relative to grid UIImage; x = 1079 relative to main window left anchor
+IMG_RBTN_LEFT = NUM_BTN_LEFT
 
+IMG_LCONFIG = [[IMG_3, IMG_4]]
+IMG_LBTN_TOP = 152
+IMG_LBTN_LEFT = 0
+
+# UIMessageDialogBox Messages
+LOSE_MSG = "<body>                            \
+                <p><b>You lost!</b></p>       \
+            </body>"
+
+WIN_MSG = "<body>                                  \
+                   <p><b>You won the game!</b></p> \
+           </body>"
