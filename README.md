@@ -16,6 +16,7 @@ A Sudoku game prototype written in Python that utilizes simple web scraping.
   - [ ] Main Menu 
 - [ ] Implement hints functionality and hint button during gameplay
 - [ ] Work on prettying up GUI
+- [ ] Add step-by-step solving feature (game shows you how to solve board tile-by-tile, using various sudoku strategies like Hidden/Naked Singles, X-Wing, etc.)
 
 ## Credits:
 - Sudoku board source: [Sudoku9x9](http://www.sudoku9x9.com/mobile/)
