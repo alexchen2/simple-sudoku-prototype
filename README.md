@@ -1,5 +1,5 @@
 # simple-sudoku-prototype
-A Sudoku game prototype written in Python that utilizes simple web scraping.
+A Sudoku game prototype written in Python that utilizes basic web scraping, created with the aim to practice utilizing OOP in Python.
 
 ## Features:
 - Obtains random valid sudoku boards by webscraping a sudoku generator website (with BeautifulSoup4), compiling them into a JSON for later use
@@ -28,4 +28,4 @@ A Sudoku game prototype written in Python that utilizes simple web scraping.
 - Some tiles will randomly disappear when board is disabled after winning a game
 
 ## Credits:
-- Sudoku board source: [Sudoku9x9](http://www.sudoku9x9.com/mobile/)
+Sudoku board source: [Sudoku9x9](http://www.sudoku9x9.com/mobile/)
