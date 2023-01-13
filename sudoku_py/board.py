@@ -5,11 +5,11 @@ from math import floor
 from random import choice, randint, shuffle
 from time import sleep
 import json
-import pygame
+import pygame_gui, pygame
 
 # Import self-made modules
 from createBoard import create, addFive
-from strategies import strategies
+# from strategies import strategies   # WIP, not implemented yet
 
 # Temp function for printing formatted lists, delete later
 
@@ -28,21 +28,15 @@ def sqIndexMin(index):
     return (3 * floor(index / 3))
 
 # Gives the upper index for row/column of a 3x3 square area on the board (depending on num location)
-
-
 # old eq for max limit: "(3 - (sqCol % 3)) + (sqCol - 1)"
 def sqIndexMax(index):
     return ((3 * floor(index / 3)) + 3)
 
 # Throw special exception IF too many errors made in SudokuParser obj
-
-
 class MistakeException(Exception):
     pass
 
 # Board class for sudoku board
-
-
 class Sudoku():
     # Class variables for finding the bounds for the indexes within the area of a 3x3 square on the board
     def __init__(self, level: str = '3'):
@@ -58,7 +52,7 @@ class Sudoku():
         return (iter(self.answer))
 
     # Temp until I implement GUI
-    def __str__(self):
+    def __str__(self, manualGet = False):
         board = self.answer
         output = "╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗\n"
 
@@ -67,17 +61,17 @@ class Sudoku():
 
             for tileSlot, tileNum in enumerate(tileRow):
                 if tileSlot in [2, 5]:
-                    if tileNum != "*":
+                    if tileNum != "*" and not manualGet:
                         output += f"\033[1;30;47m {tileNum} \033[0;0m║"
                     else:
                         output += f" {tileNum} ║"
                 elif tileSlot != 8:
-                    if tileNum != "*":
+                    if tileNum != "*" and not manualGet:
                         output += f"\033[1;30;47m {tileNum} \033[0;0m│"
                     else:
                         output += f" {tileNum} │"
                 else:
-                    if tileNum != "*":
+                    if tileNum != "*" and not manualGet:
                         output += f"\033[1;30;47m {tileNum} \033[0;0m"
                     else:
                         output += f" {tileNum} "
@@ -92,19 +86,8 @@ class Sudoku():
         output += "╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝"
         return output
 
-    # Temp method to test if Board __iter__ method iterates properly
-
-    def displayOccur(self, num):
-        displayCount = 0
-        print(f"Squares containing the value \"{num}\":")
-
-        for indexRow, row in enumerate(self):
-            for col in range(9):
-
-                if row[col] == num:
-                    displayCount += 1
-                    print(
-                        f"Square #{displayCount}: Row = {indexRow}, Column = {col}")
+    def getStr(self) -> str:
+        return self.__str__(manualGet = True)
 
     # Generates a good sudoku board at the start of the game - generate determining num for chance of generating num in sq, then check if sq num complies with .check rules
     def getBoard(self):
@@ -137,10 +120,9 @@ class Sudoku():
 
         # 3). Check if database needs to be updated w/ new boards + update current boards dict in database
         boardID += 1
-        print(self.level, boardID)
+        # print(self.level, boardID)
 
         if boardID > 5:
-            print("Adding new boards to json...")
             addFive(self.level)
         else:
             database["Current Boards"][self.level] = boardID

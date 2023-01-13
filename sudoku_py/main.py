@@ -5,12 +5,10 @@
 
 # Same package imports
 from board import Sudoku
-from createBoard import create
+
 from display import Game
 
 def main():
-    create()
-
     game = Game()
     game.start()
 

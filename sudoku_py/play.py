@@ -96,7 +96,7 @@ class Play():
                                         "bottom_target": self.infoPanelIn})
 
         self.mistakeLbl = UILabel(pygame.Rect(MIST_LBL_POS, PLBL_DIM),
-                                  text=f"Mistakes: {str(self.mistakes)} / 5",
+                                  text=f"Mistakes: {str(self.mistakes)} / 3",
                                   container=self.infoPanelIn,
                                   manager=self.manager,
                                   object_id=ObjectID(class_id="@play_label",
@@ -171,7 +171,7 @@ class Play():
 
             self.gameOver = False
             self.mistakes = 0
-            self.mistakeLbl.set_text(f"Mistakes: {str(self.mistakes)} / 5")
+            self.mistakeLbl.set_text(f"Mistakes: {str(self.mistakes)} / 3")
 
             self.tileBtns = {(row, col): self.createTileBtn(self.sudoku, row, col)
                              for col in range(9) for row in range(9)}
@@ -378,7 +378,7 @@ class Play():
 
             # Update num of mistakes and mistake counter
             self.mistakes += 1
-            self.mistakeLbl.set_text(f"Mistakes: {str(self.mistakes)} / 5")
+            self.mistakeLbl.set_text(f"Mistakes: {str(self.mistakes)} / 3")
 
         self.checkProgress()
 
@@ -429,14 +429,14 @@ class Play():
         Checks the current progress of the game; specifically, if the user either has made more than 
         five mistakes (a loss) or has correctly filled out all of the hidden interactable tiles on the 
         board (a win). If either condition checks True, then the game ends and the window transitions 
-        to the Game End/Game Over screen (WIP).
+        to the Game End/Game Over screen/pop-up (WIP).
         """
         # Update progress bar
         progress = round((self.correctTiles / self.totalTiles) * 100, 2)
         self.pBar.set_current_progress(progress)
         self.pBar.status_text = lambda: f"Progress: {self.pBar.current_progress:0.2f}%"
 
-        if self.mistakes >= 5:
+        if self.mistakes >= 3:
             self.gameOver = True
             print("Lose Test")
             htmlMsg = LOSE_MSG
@@ -480,6 +480,8 @@ class Play():
             if event.key in KEY_CHECK:
                 inputNum = str(KEY_CHECK.index(event.key) + 1)
                 self.placeNum(inputNum)
+            elif event.key == pygame.K_BACKSPACE:
+                self.deleteNum()
 
         # In-game UIButton input
         elif event.type == pygame_gui.UI_BUTTON_PRESSED:

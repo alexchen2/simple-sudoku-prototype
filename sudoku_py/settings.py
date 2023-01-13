@@ -6,7 +6,7 @@ import pygame
 # ----------------#
 WIN_WIDTH = 1280
 WIN_HEIGHT = 720      # (width, height)
-TITLE = "Sudoku Game Prototype - by Alex Chen"
+TITLE = "Sudoku Game"
 WIN_ICON = "img/sudoku.png"
 FPS = 60
 
@@ -19,6 +19,13 @@ KEY_CHECK = [pygame.K_1,
              pygame.K_7,
              pygame.K_8,
              pygame.K_9]
+
+DEBUG_WIN_LEFT = 340
+DEBUG_WIN_TOP = 160
+DEBUG_WIN_WIDTH = 600
+DEBUG_WIN_LENGTH = 300
+DEBUG_WIN_POS = (DEBUG_WIN_LEFT, DEBUG_WIN_TOP)
+DEBUG_WIN_DIM = (DEBUG_WIN_WIDTH, DEBUG_WIN_LENGTH)
 
 # ----------------#
 # Level Select Menu Constants

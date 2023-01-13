@@ -2,12 +2,13 @@
 import pygame
 import sys
 import pygame_gui
+from pygame_gui.core import ObjectID
 from settings import *
 from levelSelect import LevelSelect
 from play import Play
 from board import Sudoku, SudokuParser    # currently redundant
+from createBoard import create
 import time
-
 
 class Game():
     def __init__(self):
@@ -16,6 +17,7 @@ class Game():
 
         # For switching between different screens; 0 = lvlSelect, 1 = game, etc... (expand on later)
         self.status = 0
+
         # Window is hidden beforehand (until Game.start() is run)
         self.screen = pygame.display.set_mode(
             (WIN_WIDTH, WIN_HEIGHT), flags=pygame.HIDDEN)
@@ -33,6 +35,63 @@ class Game():
         self.levelSelect = LevelSelect(self.manager)
         self.play = Play(self.manager)
 
+        self.isDebug = False
+        self.debugLayerView = False
+        self.debugPrompt = self.createDebugPrompt("Placeholder")
+        self.debugPrompt.hide()
+        self.debugPrompt.disable()
+
+        create()
+
+    def debugCheck(self, event):
+        if event.key == pygame.K_TAB:
+            # Closes previous debug prompt popup, if it is still open
+            if self.debugPrompt.is_enabled:
+                self.debugPrompt.kill()
+
+            debugMsg = f"Debug mode: {not self.isDebug}\n"
+
+            if self.isDebug:
+                self.isDebug = False
+                debugMsg += "\nDebug features are now disabled."
+            else:
+                self.isDebug = True
+                debugMsg += "\nPress B during gameplay to toggle board solutions.\nPress L on any screen to toggle UIObject Layer View."
+
+            self.debugPrompt = self.createDebugPrompt(debugMsg)
+
+        elif event.key == pygame.K_b:
+            if self.isDebug:
+                if self.debugPrompt.is_enabled:
+                    self.debugPrompt.kill()
+
+                if all([self.sudoku != None, self.status == 1]):
+                    debugMsg = "Board Solution:\n" + self.sudoku.getStr()
+                    self.debugPrompt = self.createDebugPrompt(debugMsg, winParam = (315, 35, 650, 650))
+        elif event.key == pygame.K_l:
+            if self.isDebug:
+                # if self.debugPrompt.is_enabled: 
+                #     self.debugPrompt.kill()
+
+                if self.debugLayerView:
+                    self.debugLayerView = False
+                else:
+                    self.debugLayerView = True
+                
+                self.manager.set_visual_debug_mode(self.debugLayerView)
+                # debugMsg = f"UIObject Layer Toggle View: {self.debugLayerView}"
+                # self.debugPrompt = self.createDebugPrompt(debugMsg)
+
+    def createDebugPrompt(self, msg: str, winParam = (DEBUG_WIN_POS, DEBUG_WIN_DIM)):
+        output = pygame_gui.windows.UIMessageWindow(pygame.Rect(winParam),
+                                                html_message=msg,
+                                                manager=self.manager,
+                                                object_id=ObjectID(class_id="@display_msg_box",
+                                                                    object_id="#debug_message"),
+                                                window_title="Debug")
+
+        return output
+
     # Start running the entire game; open display window
     def start(self):
         self.screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
@@ -49,13 +108,16 @@ class Game():
 
                     pygame.quit()
                     sys.exit()
-                else:
+                elif event.type == pygame.KEYDOWN:   # Debug mode - press tab to enable/disable
+                    self.debugCheck(event)
+                
+                if event.type != pygame.QUIT:
                     self.status, self.sudoku = self.levelSelect.eventCheck(
                         event, self.status, self.sudoku)
                     if self.sudoku != None:
                         self.play.sudoku = self.sudoku
 
-                    self.status = self.play.eventCheck(event, self.status)
+                        self.status = self.play.eventCheck(event, self.status)
 
                 self.manager.process_events(event)
 
@@ -69,7 +131,6 @@ class Game():
                     boardChange = True      # for rewriting sudoku board in Play module
                 case 1:     # main game menu, temp functionality for now
                     if boardChange:
-                        print(self.sudoku)     # for debug
                         self.play.sudoku = self.sudoku
                         self.play.run(boardChange)
                         boardChange = False
@@ -87,9 +148,12 @@ class Game():
 # --------------------#
 # Test/Debug
 # --------------------#
+
+
 def main():
     test = Game()
     test.start()
+
 
 if __name__ == "__main__":
     main()
